@@ -139,4 +139,5 @@ void loop() {
 		}
 		lastMotionTimer = millis();
 	}
+	delay(1000);
 }
