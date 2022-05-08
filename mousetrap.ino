@@ -82,51 +82,53 @@ void setup() {
 }
 
 void loop() {
-	if (currentState == ArmingNervous && millis() - timer >= 100) {  // Every 1/10th of a second (nervous)
-		quickTone(700);
-		if (millis() - lastMotionTimer >= 3000) {
-			longTone(700);
-			currentState = Armed;
-		}
-		timer = millis();
-	} else if (millis() - timer >= 1000) {  // Every second (lazy)
-		switch (currentState) {
-			case Locked:
-				if (millis() - lastMotionTimer >= 30000) {
-					longTone(300);
-					delay(500);
-					if (battery.getState() == CHARGING_IDLE) {
-						battery.off();
-						delay(1000);
-					} else {
-						while(true) {
-							batteryLevelTone(battery.getLevel() / 10);
-							delay(60000);
+	if (currentState != Armed) {
+		if (currentState == ArmingNervous && millis() - timer >= 100) {  // Every 1/10th of a second (nervous)
+			quickTone(700);
+			if (millis() - lastMotionTimer >= 3000) {
+				longTone(700);
+				currentState = Armed;
+			}
+			timer = millis();
+		} else if (millis() - timer >= 1000) {  // Every second (lazy)
+			switch (currentState) {
+				case Locked:
+					if (millis() - lastMotionTimer >= 30000) {
+						longTone(300);
+						delay(500);
+						if (battery.getState() == CHARGING_IDLE) {
+							battery.off();
+							delay(1000);
+						} else {
+							while(true) {
+								batteryLevelTone(battery.getLevel() / 10);
+								delay(60000);
+							}
 						}
 					}
-				}
-				quickTone(300);
-				break;
-			case Cooldown:
-				if (millis() - lastMotionTimer >= 10000) {
-					currentState = ArmingLazy;
-					lastMotionTimer = millis();
-				}
-				quickDoubleTone(500, 400);
-				break;
-			case ArmingLazy:
-				if (millis() - lastMotionTimer >= 5000) {
-					currentState = ArmingNervous;
-					lastMotionTimer = millis();
-				}
-				quickTone(700);
-				break;
-			case Alert:
-				alertTone(currentAlertToneIsHigh);
-				currentAlertToneIsHigh = !currentAlertToneIsHigh;
-				break;
+					quickTone(300);
+					break;
+				case Cooldown:
+					if (millis() - lastMotionTimer >= 10000) {
+						currentState = ArmingLazy;
+						lastMotionTimer = millis();
+					}
+					quickDoubleTone(500, 400);
+					break;
+				case ArmingLazy:
+					if (millis() - lastMotionTimer >= 5000) {
+						currentState = ArmingNervous;
+						lastMotionTimer = millis();
+					}
+					quickTone(700);
+					break;
+				case Alert:
+					alertTone(currentAlertToneIsHigh);
+					currentAlertToneIsHigh = !currentAlertToneIsHigh;
+					break;
+			}
+			timer = millis();
 		}
-		timer = millis();
 	}
 	if (digitalRead(PIN_MOTION_IN) == 1) {
 		if (currentState == Armed) {
