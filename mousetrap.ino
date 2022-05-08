@@ -129,10 +129,12 @@ void loop() {
 			}
 			timer = millis();
 		}
+	} else {
+		delay(1000);
 	}
 	if (digitalRead(PIN_MOTION_IN) == 1) {
 		if (currentState == Armed) {
-			delay(2000);  // Preventing false alarm
+			delay(1000);  // Preventing false alarm
 			if (digitalRead(PIN_MOTION_IN) == 1) {
 				currentState = Alert;
 			}
@@ -141,5 +143,4 @@ void loop() {
 		}
 		lastMotionTimer = millis();
 	}
-	delay(1000);
 }
