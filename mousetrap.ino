@@ -25,7 +25,7 @@ enum State {
 	Alert
 };
 
-Battery_Shield battery;
+Battery_Shield battery(0x75);
 uint32_t timer;
 uint32_t lastMotionTimer;
 State currentState;
